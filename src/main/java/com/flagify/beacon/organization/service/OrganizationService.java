@@ -7,6 +7,7 @@ import com.flagify.beacon.util.UuidGenerator;
 import com.flagify.beacon.organization.dto.OrganizationDto;
 import com.flagify.beacon.organization.entity.OrganizationEntity;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,8 +23,8 @@ public class OrganizationService {
 
     public OrganizationDto createOrganization(String name) {
         String baseSlug = generateSlug(name);
-        int maxSuffix = organizationRepository.findMaxSuffixByBaseSlug(baseSlug).orElse(0);
-        String slug = maxSuffix == 0? baseSlug: baseSlug + "-" + (maxSuffix + 1);
+        Integer maxIndex = organizationRepository.findMaxSlugIndexByBaseSlug(baseSlug).orElse(null);
+        String slug = maxIndex == null ? baseSlug : baseSlug + "-" + (maxIndex + 1);
 
         if(organizationRepository.existsBySlug(slug)) {
             throw new RuntimeException("Slug already exists, please try again.");
@@ -33,8 +34,8 @@ public class OrganizationService {
         organization.setId(uuidGenerator.generateV7Uuid());
         organization.setName(name);
         organization.setSlug(slug);
-        organization.setCreatedAt(java.time.LocalDateTime.now());
-        organization.setUpdatedAt(java.time.LocalDateTime.now());
+        organization.setCreatedAt(LocalDateTime.now());
+        organization.setUpdatedAt(LocalDateTime.now());
 
         OrganizationEntity savedOrganization = organizationRepository.save(organization);
         return toDto(savedOrganization);
@@ -53,7 +54,11 @@ public class OrganizationService {
     }
 
     private OrganizationDto toDto(OrganizationEntity entity) {
-        return new OrganizationDto(entity.getId(), entity.getSlug(), entity.getName(), entity.getCreatedAt());
+        return new OrganizationDto(entity.getSlug(), entity.getName(), entity.getCreatedAt());
+    }
+
+    public Optional<OrganizationEntity> findBySlugEntity(String slug) {
+        return organizationRepository.findBySlug(slug);
     }
 
 }

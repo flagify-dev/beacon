@@ -12,6 +12,16 @@ import java.util.UUID;
 public interface OrganizationRepository extends JpaRepository<OrganizationEntity, UUID> {
     Optional<OrganizationEntity> findBySlug(String slug);
     boolean existsBySlug(String slug);
-    @Query("SELECT MAX(CAST(SUBSTRING(o.slug, LENGTH(:baseSlug) + 2) AS int)) FROM OrganizationEntity o WHERE o.slug LIKE :baseSlug || '-%'")
-    Optional<Integer> findMaxSuffixByBaseSlug(@Param("baseSlug") String baseSlug);
+    @Query("""
+        SELECT MAX(
+            CASE
+                WHEN o.slug = :baseSlug THEN 0
+                ELSE CAST(SUBSTRING(o.slug, LENGTH(:baseSlug) + 2) AS int)
+            END
+        )
+        FROM OrganizationEntity o
+        WHERE o.slug = :baseSlug
+        OR o.slug LIKE CONCAT(:baseSlug, '-%')
+    """)
+    Optional<Integer> findMaxSlugIndexByBaseSlug(@Param("baseSlug") String baseSlug);
 }
