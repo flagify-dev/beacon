@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.flagify.beacon.project.dto.*;
 import com.flagify.beacon.project.service.ProjectService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/projects")
 public class ProjectController {
@@ -23,7 +25,7 @@ public class ProjectController {
     
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ProjectDto createProject(@RequestBody CreateProjectRequest request) {
+    public ProjectDto createProject(@RequestBody @Valid CreateProjectRequest request) {
         return projectService.createProject(request.organizationSlug(), request.name(), request.description());
     }
 
