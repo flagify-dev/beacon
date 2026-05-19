@@ -1,3 +1,5 @@
 package com.flagify.beacon.project.dto;
 
-public record CreateProjectRequest (String organizationSlug, String name, String description) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateProjectRequest (@NotBlank String organizationSlug, @NotBlank String name, String description) {}

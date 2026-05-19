@@ -13,6 +13,8 @@ import com.flagify.beacon.organization.dto.CreateOrganizationRequest;
 import com.flagify.beacon.organization.dto.OrganizationDto;
 import com.flagify.beacon.organization.service.OrganizationService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/organizations")
 public class OrganizationController {
@@ -24,7 +26,7 @@ public class OrganizationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrganizationDto createOrganization(@RequestBody CreateOrganizationRequest request) {
+    public OrganizationDto createOrganization(@RequestBody @Valid CreateOrganizationRequest request) {
         return organizationService.createOrganization(request.name());
     }
 

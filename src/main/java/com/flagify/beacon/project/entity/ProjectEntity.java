@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.flagify.beacon.organization.entity.OrganizationEntity;
+import com.flagify.beacon.shared.entity.BaseEntity;
 
 import jakarta.persistence.*;
 
@@ -13,10 +14,7 @@ import jakarta.persistence.*;
         @UniqueConstraint(name = "uk_project_org_id_slug", columnNames = {"org_id", "slug"})
     }
 )
-public class ProjectEntity {
-    @Id
-    @Column(name="id")
-    private UUID id;
+public class ProjectEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "org_id", nullable = false, foreignKey = @ForeignKey(name = "fk_project_org_id"))
@@ -31,30 +29,18 @@ public class ProjectEntity {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
-
     // Constructors
     public ProjectEntity() {}
 
     public ProjectEntity(UUID id, OrganizationEntity organization, String name, String slug, String description, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
+        super(id, createdAt, updatedAt);
         this.organization = organization;
         this.name = name;
         this.slug = slug;
         this.description = description;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
     }
 
     // Getters
-    public UUID getId() {
-        return id;
-    }
-
     public OrganizationEntity getOrganization() {
         return organization;
     }
@@ -71,19 +57,7 @@ public class ProjectEntity {
         return description;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
     // Setters
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public void setOrganization(OrganizationEntity organization) {
         this.organization = organization;
     }
@@ -100,37 +74,16 @@ public class ProjectEntity {
         this.description = description;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     @Override
     public String toString() {
         return "ProjectEntity{" +
-                "id=" + id +
+                "id=" + super.getId() +
                 ", org_id=" + (organization != null ? organization.getId() : null) +
                 ", name='" + name + '\'' +
                 ", slug='" + slug + '\'' +
                 ", description='" + description + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
+                ", createdAt=" + super.getCreatedAt() +
+                ", updatedAt=" + super.getUpdatedAt() +
                 '}'; 
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProjectEntity that = (ProjectEntity) o;
-        return id != null? id.equals(that.id) : that.id == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
     }
 }
