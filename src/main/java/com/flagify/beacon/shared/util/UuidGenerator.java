@@ -1,4 +1,4 @@
-package com.flagify.beacon.util;
+package com.flagify.beacon.shared.util;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import org.springframework.stereotype.Component;
